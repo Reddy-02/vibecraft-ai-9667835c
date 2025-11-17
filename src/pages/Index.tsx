@@ -3,6 +3,7 @@ import Particles from '@/components/Particles';
 import FaceEmotionMP from '@/components/FaceEmotionMP';
 import BujjiOrb from '@/components/BujjiOrb';
 import MoodAnalytics from '@/components/MoodAnalytics';
+import MoodQuotes from '@/components/MoodQuotes';
 import GenerationPanel from '@/components/GenerationPanel';
 
 type Emotion = 'happy' | 'sad' | 'surprised' | 'neutral' | 'angry';
@@ -49,6 +50,11 @@ const Index = () => {
 
             {/* Generation Panel */}
             <GenerationPanel currentMood={currentMood} />
+          </div>
+
+          {/* Mood Quotes */}
+          <div className="max-w-7xl mx-auto mt-6">
+            <MoodQuotes currentMood={currentMood} />
           </div>
 
           {/* Analytics */}

@@ -22,6 +22,42 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
   const [error, setError] = useState<string>('');
   const faceLandmarkerRef = useRef<any>(null);
   const emotionBufferRef = useRef<Emotion[]>([]);
+  const lastSaveTimeRef = useRef<number>(Date.now());
+
+  const saveMoodToHistory = (emotion: Emotion) => {
+    const now = Date.now();
+    // Only save every 5 seconds to avoid too many entries
+    if (now - lastSaveTimeRef.current < 5000) return;
+    
+    lastSaveTimeRef.current = now;
+    const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    
+    const stored = localStorage.getItem('moodHistory');
+    let history = stored ? JSON.parse(stored) : [];
+    
+    const todayEntry = history.find((h: any) => h.date === today);
+    if (todayEntry) {
+      todayEntry[emotion] = (todayEntry[emotion] || 0) + 1;
+    } else {
+      const newEntry = {
+        date: today,
+        happy: 0,
+        sad: 0,
+        angry: 0,
+        surprised: 0,
+        neutral: 0,
+      };
+      newEntry[emotion] = 1;
+      history.push(newEntry);
+      
+      // Keep only last 7 days
+      if (history.length > 7) {
+        history = history.slice(-7);
+      }
+    }
+    
+    localStorage.setItem('moodHistory', JSON.stringify(history));
+  };
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -164,6 +200,9 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
           setEmotion(smoothedEmotion);
           onEmotionDetected?.(smoothedEmotion);
           
+          // Save to mood history
+          saveMoodToHistory(smoothedEmotion);
+          
           // Draw HUD circle around face
           const landmarks = result.faceLandmarks[0];
           const centerX = landmarks.reduce((sum: number, p: any) => sum + p.x, 0) / landmarks.length;
@@ -172,11 +211,11 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
           const radius = 150;
           
           const emotionColors: Record<Emotion, string> = {
-            happy: '#fbbf24',
-            sad: '#3b82f6',
-            angry: '#ef4444',
-            surprised: '#a855f7',
-            neutral: '#6b7280',
+            happy: '#d9d9d9',
+            sad: '#595959',
+            angry: '#404040',
+            surprised: '#bfbfbf',
+            neutral: '#808080',
           };
           
           // Glow circle
