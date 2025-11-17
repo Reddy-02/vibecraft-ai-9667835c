@@ -10,13 +10,13 @@ const BujjiOrb = () => {
     <>
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-gradient-to-br from-neon-purple to-neon-pink p-0 neon-glow animate-float hover:scale-110 transition-transform"
-        aria-label="Open Bujji Assistant"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary p-0 premium-glow-strong hover:scale-105 transition-all shadow-lg"
+        aria-label="Open Assistant"
       >
         {isOpen ? (
-          <X className="w-8 h-8" />
+          <X className="w-6 h-6" />
         ) : (
-          <MessageCircle className="w-8 h-8" />
+          <MessageCircle className="w-6 h-6" />
         )}
       </Button>
 

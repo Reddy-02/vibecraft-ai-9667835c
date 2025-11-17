@@ -219,51 +219,43 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
   };
 
   return (
-    <Card className="glass-panel p-6 relative overflow-hidden">
-      <div className="absolute inset-0 hologram-grid opacity-20" />
+    <Card className="glass-panel p-6 premium-glow h-full">
+      <h2 className="text-xl font-light mb-6 text-foreground">Emotion Detection</h2>
       
-      <div className="relative z-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-neon-purple">Emotion Scan</h2>
-          <div className="flex items-center gap-2">
-            <span className="text-4xl">{emotionEmojis[emotion]}</span>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Current Mood</p>
-              <p className="text-xl font-bold capitalize text-neon-cyan">{emotion}</p>
-            </div>
+      {error && (
+        <div className="bg-destructive/10 border border-destructive/50 text-destructive-foreground p-3 rounded-lg mb-4 text-sm">
+          {error}
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="flex items-center justify-center h-64">
+          <div className="text-muted-foreground text-sm">Initializing...</div>
+        </div>
+      )}
+
+      <div className="relative" style={{ display: isLoading ? 'none' : 'block' }}>
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className="w-full rounded-lg border border-border/50"
+        />
+        <canvas
+          ref={canvasRef}
+          className="absolute top-0 left-0 w-full h-full pointer-events-none"
+        />
+      </div>
+
+      {emotion && (
+        <div className="mt-6 p-4 bg-card/50 backdrop-blur-sm rounded-lg text-center border border-border/30">
+          <div className="text-4xl mb-2">{emotionEmojis[emotion]}</div>
+          <div className="text-lg font-light capitalize text-foreground">
+            {emotion}
           </div>
         </div>
-
-        <div className="relative rounded-xl overflow-hidden border-2 border-neon-purple/30">
-          {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-20">
-              <div className="text-center">
-                <div className="animate-pulse-glow w-16 h-16 mx-auto mb-4 rounded-full bg-neon-purple" />
-                <p className="text-neon-cyan">Initializing face detection...</p>
-              </div>
-            </div>
-          )}
-          
-          {error && (
-            <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-20">
-              <p className="text-destructive">{error}</p>
-            </div>
-          )}
-          
-          <video
-            ref={videoRef}
-            className="w-full h-auto"
-            autoPlay
-            playsInline
-            muted
-          />
-          
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full"
-          />
-        </div>
-      </div>
+      )}
     </Card>
   );
 };

@@ -74,60 +74,53 @@ const GenerationPanel = ({ currentMood }: GenerationPanelProps) => {
   };
 
   return (
-    <Card className="glass-panel p-6 relative overflow-hidden">
-      <div className="absolute inset-0 hologram-grid opacity-20" />
-      
+    <Card className="glass-panel p-6 relative overflow-hidden premium-glow h-full">
       <div className="relative z-10">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-neon-purple">Auto Generation</h2>
-          <Button
-            onClick={generateContent}
-            disabled={isGenerating}
-            className="bg-gradient-to-r from-neon-purple to-neon-pink neon-glow"
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            {isGenerating ? 'Generating...' : 'Generate Now'}
-          </Button>
-        </div>
+        <h2 className="text-xl font-light mb-6 text-foreground">Enhancement</h2>
+
+        <Button
+          onClick={generateContent}
+          disabled={isGenerating}
+          className="w-full mb-6 bg-primary hover:bg-primary/90 text-primary-foreground font-light py-6 text-base premium-glow-strong transition-all"
+        >
+          {isGenerating ? 'Generating...' : 'Generate Content'}
+        </Button>
 
         {wallpaperUrl && (
-          <div className="mb-6 space-y-4">
-            <div className="flex items-center gap-2">
-              <ImageIcon className="w-5 h-5 text-neon-cyan" />
-              <h3 className="font-semibold">Mood Wallpaper</h3>
-            </div>
-            <div className="rounded-lg overflow-hidden border-2 border-neon-purple/30">
-              <img
-                src={wallpaperUrl}
-                alt="Mood wallpaper"
-                className="w-full h-48 object-cover"
-              />
-            </div>
+          <div className="mb-6">
+            <h3 className="text-sm font-light mb-3 text-muted-foreground uppercase tracking-wider">Mood Wallpaper</h3>
+            <img
+              src={wallpaperUrl}
+              alt="Generated mood wallpaper"
+              className="w-full rounded-lg border border-border/50"
+            />
           </div>
         )}
 
         {affirmations.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-neon-cyan" />
-              <h3 className="font-semibold">Your Affirmations</h3>
-            </div>
-            {affirmations.map((affirmation, idx) => (
-              <div
-                key={idx}
-                className="glass-panel p-4 rounded-lg border border-neon-cyan/30 flex items-center justify-between group"
-              >
-                <p className="text-sm flex-1">{affirmation}</p>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => speakAffirmation(affirmation)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+          <div>
+            <h3 className="text-sm font-light mb-3 text-muted-foreground uppercase tracking-wider">Affirmations</h3>
+            <div className="space-y-3">
+              {affirmations.map((affirmation, index) => (
+                <div
+                  key={index}
+                  className="p-4 bg-card/50 backdrop-blur-sm rounded-lg flex items-start gap-3 border border-border/30"
                 >
-                  <Volume2 className="w-4 h-4 text-neon-cyan" />
-                </Button>
-              </div>
-            ))}
+                  <span className="text-xl opacity-60">{index === 0 ? '🌟' : index === 1 ? '💫' : '✨'}</span>
+                  <div className="flex-1">
+                    <p className="text-foreground text-sm">{affirmation}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => speakAffirmation(affirmation)}
+                    className="shrink-0 hover:bg-primary/10"
+                  >
+                    🔊
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

@@ -19,47 +19,43 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Particles Background */}
-      <Particles />
-
-      {/* Mood-Adaptive Background */}
+    <div className="min-h-screen relative overflow-hidden bg-background">
+      {/* Subtle Background Effects */}
       <div
-        className="fixed inset-0 transition-all duration-1000 pointer-events-none"
+        className="fixed inset-0 transition-all duration-1000 pointer-events-none opacity-30"
         style={{ background: moodGradients[currentMood] }}
       />
 
-      {/* Hologram Grid Overlay */}
-      <div className="fixed inset-0 hologram-grid opacity-10 pointer-events-none" />
-
-      {/* Scan Line Effect */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute w-full h-1 bg-gradient-to-r from-transparent via-neon-cyan/30 to-transparent animate-scan-line" />
-      </div>
+      {/* Minimal Grid */}
+      <div className="fixed inset-0 minimal-grid opacity-40 pointer-events-none" />
 
       {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4 py-8">
+      <div className="relative z-10 min-h-screen flex flex-col">
         {/* Header */}
-        <header className="text-center mb-12">
-          <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-neon-purple via-neon-pink to-neon-cyan bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
-            VibeCraft Advanced
+        <header className="text-center pt-12 pb-8 px-4">
+          <h1 className="text-5xl md:text-6xl font-light mb-3 text-foreground tracking-tight">
+            VibeCraft
           </h1>
-          <p className="text-lg text-muted-foreground">
-            AI-Powered Emotion Detection & Mood Enhancement System
+          <p className="text-sm text-muted-foreground font-light">
+            Emotion Detection & Mood Enhancement
           </p>
         </header>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Emotion Detection */}
-          <FaceEmotionMP onEmotionDetected={setCurrentMood} />
+        <div className="flex-1 container mx-auto px-4 pb-24">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Emotion Detection */}
+            <FaceEmotionMP onEmotionDetected={setCurrentMood} />
 
-          {/* Generation Panel */}
-          <GenerationPanel currentMood={currentMood} />
+            {/* Generation Panel */}
+            <GenerationPanel currentMood={currentMood} />
+          </div>
+
+          {/* Analytics */}
+          <div className="max-w-7xl mx-auto mt-6">
+            <MoodAnalytics />
+          </div>
         </div>
-
-        {/* Analytics */}
-        <MoodAnalytics />
       </div>
 
       {/* Bujji Orb Assistant */}
