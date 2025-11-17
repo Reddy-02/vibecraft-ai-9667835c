@@ -23,10 +23,10 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
   const faceLandmarkerRef = useRef<any>(null);
   const emotionBufferRef = useRef<Emotion[]>([]);
   const lastSaveTimeRef = useRef<number>(Date.now());
+  const scriptLoadedRef = useRef(false);
 
   const saveMoodToHistory = (emotion: Emotion) => {
     const now = Date.now();
-    // Only save every 5 seconds to avoid too many entries
     if (now - lastSaveTimeRef.current < 5000) return;
     
     lastSaveTimeRef.current = now;
@@ -50,7 +50,6 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
       newEntry[emotion] = 1;
       history.push(newEntry);
       
-      // Keep only last 7 days
       if (history.length > 7) {
         history = history.slice(-7);
       }
@@ -60,29 +59,61 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
   };
 
   useEffect(() => {
+    if (scriptLoadedRef.current) return;
+    
+    const existingScript = document.querySelector('script[src*="mediapipe"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/vision_bundle.js';
     script.async = true;
-    document.body.appendChild(script);
-
+    script.crossOrigin = 'anonymous';
+    
     script.onload = () => {
-      initializeFaceLandmarker();
+      console.log('MediaPipe script loaded successfully');
+      scriptLoadedRef.current = true;
+      setTimeout(() => {
+        initializeFaceLandmarker();
+      }, 100);
     };
+
+    script.onerror = (e) => {
+      console.error('Failed to load MediaPipe script:', e);
+      setError('Failed to load face detection library. Please refresh the page.');
+      setIsLoading(false);
+    };
+
+    document.body.appendChild(script);
 
     return () => {
       if (faceLandmarkerRef.current) {
-        faceLandmarkerRef.current.close();
+        try {
+          faceLandmarkerRef.current.close();
+        } catch (e) {
+          console.error('Error closing face landmarker:', e);
+        }
       }
-      document.body.removeChild(script);
+      const scriptToRemove = document.querySelector('script[src*="mediapipe"]');
+      if (scriptToRemove) {
+        document.body.removeChild(scriptToRemove);
+      }
     };
   }, []);
 
   const initializeFaceLandmarker = async () => {
     try {
+      if (!window.FilesetResolver || !window.FaceLandmarker) {
+        throw new Error('MediaPipe libraries not available');
+      }
+
+      console.log('Initializing FilesetResolver...');
       const vision = await window.FilesetResolver.forVisionTasks(
         'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm'
       );
 
+      console.log('Creating FaceLandmarker...');
       faceLandmarkerRef.current = await window.FaceLandmarker.createFromOptions(vision, {
         baseOptions: {
           modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
@@ -92,9 +123,11 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
         numFaces: 1,
       });
 
+      console.log('FaceLandmarker initialized successfully');
       startWebcam();
     } catch (err) {
-      setError('Failed to initialize face detection');
+      console.error('Initialization error:', err);
+      setError(`Failed to initialize face detection: ${err instanceof Error ? err.message : 'Unknown error'}`);
       setIsLoading(false);
     }
   };
