@@ -8,57 +8,58 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
+    --background: 0 0% 7%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 5%;
+    --card: 0 0% 10%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 5%;
+    --popover: 0 0% 10%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 280 100% 70%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 263 70% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 280 60% 25%;
+    --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 5% 20%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 180 100% 50%;
-    --accent-foreground: 240 10% 3.9%;
+    --accent: 263 70% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 63% 55%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 10% 15%;
-    --input: 240 10% 15%;
-    --ring: 280 100% 70%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 263 70% 60%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
-    /* VibeCraft Custom Colors */
-    --neon-purple: 280 100% 70%;
-    --neon-pink: 330 100% 70%;
-    --neon-cyan: 180 100% 50%;
-    --hud-glow: 280 100% 70%;
+    /* Premium Colors */
+    --neon-purple: 263 70% 60%;
+    --neon-pink: 330 80% 65%;
+    --neon-cyan: 180 90% 55%;
+    --premium-gold: 45 100% 70%;
     
     /* Mood Colors */
-    --mood-happy: 45 100% 60%;
-    --mood-sad: 210 80% 60%;
-    --mood-angry: 0 80% 60%;
-    --mood-surprised: 280 100% 70%;
-    --mood-neutral: 240 5% 50%;
+    --mood-happy: 45 95% 65%;
+    --mood-sad: 210 70% 60%;
+    --mood-angry: 0 75% 60%;
+    --mood-surprised: 280 90% 65%;
+    --mood-neutral: 0 0% 50%;
 
-    /* Gradients */
-    --gradient-hologram: linear-gradient(135deg, hsl(280 100% 70% / 0.2), hsl(180 100% 50% / 0.2));
-    --gradient-glass: linear-gradient(135deg, hsl(240 10% 15% / 0.8), hsl(240 10% 10% / 0.6));
+    /* Premium Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(263 70% 60%), hsl(330 80% 65%));
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 15% / 0.4), hsl(0 0% 10% / 0.2));
+    --gradient-premium: linear-gradient(135deg, hsl(263 70% 60% / 0.1), hsl(330 80% 65% / 0.1));
     
-    /* Effects */
-    --glow-primary: 0 0 20px hsl(280 100% 70% / 0.5), 0 0 40px hsl(280 100% 70% / 0.3);
-    --glow-cyan: 0 0 20px hsl(180 100% 50% / 0.5), 0 0 40px hsl(180 100% 50% / 0.3);
-    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Premium Effects */
+    --glow-soft: 0 0 40px hsl(263 70% 60% / 0.2);
+    --glow-strong: 0 0 30px hsl(263 70% 60% / 0.4), 0 0 60px hsl(263 70% 60% / 0.2);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
@@ -74,21 +75,21 @@ All colors MUST be HSL.
 
 @layer utilities {
   .glass-panel {
-    @apply bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50;
+    @apply bg-card/30 backdrop-blur-2xl border border-border/30;
   }
   
-  .neon-glow {
-    box-shadow: var(--glow-primary);
+  .premium-glow {
+    box-shadow: var(--glow-soft);
   }
   
-  .cyan-glow {
-    box-shadow: var(--glow-cyan);
+  .premium-glow-strong {
+    box-shadow: var(--glow-strong);
   }
   
-  .hologram-grid {
+  .minimal-grid {
     background-image: 
-      linear-gradient(hsl(280 100% 70% / 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(280 100% 70% / 0.1) 1px, transparent 1px);
-    background-size: 40px 40px;
+      linear-gradient(hsl(0 0% 100% / 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(0 0% 100% / 0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
   }
 }

@@ -45,62 +45,65 @@ const MoodAnalytics = () => {
   }, []);
 
   return (
-    <Card className="glass-panel p-6 relative overflow-hidden">
-      <div className="absolute inset-0 hologram-grid opacity-20" />
+    <Card className="glass-panel p-6 premium-glow">
+      <h2 className="text-xl font-light mb-6 text-foreground">Weekly Analytics</h2>
       
-      <div className="relative z-10">
-        <div className="flex items-center gap-2 mb-6">
-          <Activity className="w-6 h-6 text-neon-cyan" />
-          <h2 className="text-2xl font-bold text-neon-purple">7-Day Mood Analytics</h2>
-        </div>
-
-        <ResponsiveContainer width="100%" height={300}>
+      <div className="w-full h-80">
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart data={moodData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="date" stroke="hsl(var(--foreground))" />
-            <YAxis stroke="hsl(var(--foreground))" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'hsl(var(--card))',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: '8px',
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 18%)" opacity={0.3} />
+            <XAxis 
+              dataKey="date" 
+              stroke="hsl(0 0% 60%)"
+              style={{ fontSize: '11px', fontWeight: '300' }}
+            />
+            <YAxis 
+              stroke="hsl(0 0% 60%)"
+              style={{ fontSize: '11px', fontWeight: '300' }}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'hsl(0 0% 10%)', 
+                border: '1px solid hsl(0 0% 18%)',
+                borderRadius: '6px',
+                fontSize: '12px'
               }}
             />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="happy"
-              stroke="hsl(var(--mood-happy))"
+            <Legend wrapperStyle={{ fontSize: '12px', fontWeight: '300' }} />
+            <Line 
+              type="monotone" 
+              dataKey="happy" 
+              stroke="hsl(45 95% 65%)" 
               strokeWidth={2}
-              dot={{ fill: 'hsl(var(--mood-happy))', r: 4 }}
+              dot={{ fill: 'hsl(45 95% 65%)', r: 3 }}
             />
-            <Line
-              type="monotone"
-              dataKey="sad"
-              stroke="hsl(var(--mood-sad))"
+            <Line 
+              type="monotone" 
+              dataKey="sad" 
+              stroke="hsl(210 70% 60%)" 
               strokeWidth={2}
-              dot={{ fill: 'hsl(var(--mood-sad))', r: 4 }}
+              dot={{ fill: 'hsl(210 70% 60%)', r: 3 }}
             />
-            <Line
-              type="monotone"
-              dataKey="angry"
-              stroke="hsl(var(--mood-angry))"
+            <Line 
+              type="monotone" 
+              dataKey="angry" 
+              stroke="hsl(0 75% 60%)" 
               strokeWidth={2}
-              dot={{ fill: 'hsl(var(--mood-angry))', r: 4 }}
+              dot={{ fill: 'hsl(0 75% 60%)', r: 3 }}
             />
-            <Line
-              type="monotone"
-              dataKey="surprised"
-              stroke="hsl(var(--mood-surprised))"
+            <Line 
+              type="monotone" 
+              dataKey="surprised" 
+              stroke="hsl(280 90% 65%)" 
               strokeWidth={2}
-              dot={{ fill: 'hsl(var(--mood-surprised))', r: 4 }}
+              dot={{ fill: 'hsl(280 90% 65%)', r: 3 }}
             />
-            <Line
-              type="monotone"
-              dataKey="neutral"
-              stroke="hsl(var(--mood-neutral))"
+            <Line 
+              type="monotone" 
+              dataKey="neutral" 
+              stroke="hsl(0 0% 50%)" 
               strokeWidth={2}
-              dot={{ fill: 'hsl(var(--mood-neutral))', r: 4 }}
+              dot={{ fill: 'hsl(0 0% 50%)', r: 3 }}
             />
           </LineChart>
         </ResponsiveContainer>

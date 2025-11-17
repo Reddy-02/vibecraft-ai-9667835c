@@ -67,55 +67,56 @@ const AssistantPanel = ({ isOpen, onClose }: AssistantPanelProps) => {
   if (!isOpen) return null;
 
   return (
-    <Card className="fixed bottom-28 right-6 w-96 h-[500px] z-40 glass-panel border-2 border-neon-purple/50 flex flex-col animate-scale-in">
-      <div className="absolute inset-0 hologram-grid opacity-10" />
-      
-      <div className="relative z-10 flex flex-col h-full">
-        <div className="flex items-center gap-2 p-4 border-b border-border/50">
-          <Sparkles className="w-5 h-5 text-neon-cyan" />
-          <h3 className="font-bold text-lg text-neon-purple">Bujji Assistant</h3>
-        </div>
-
-        <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-          <div className="space-y-4">
-            {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                    msg.role === 'user'
-                      ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-white'
-                      : 'glass-panel border border-neon-cyan/30'
-                  }`}
-                >
-                  <p className="text-sm">{msg.content}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-
-        <div className="p-4 border-t border-border/50">
-          <div className="flex gap-2">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Ask me anything..."
-              className="glass-panel border-neon-purple/30"
-            />
-            <Button
-              onClick={handleSend}
-              className="bg-gradient-to-r from-neon-purple to-neon-pink neon-glow"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
+    <div className="fixed bottom-24 right-6 w-96 h-[480px] z-40 glass-panel p-4 premium-glow border border-border/50 flex flex-col rounded-lg animate-scale-in">
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/30">
+        <h3 className="text-lg font-light text-foreground">Assistant</h3>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={onClose}
+          className="hover:bg-primary/10 h-8 w-8 p-0"
+        >
+          ✕
+        </Button>
       </div>
-    </Card>
+
+      <ScrollArea className="flex-1 mb-4" ref={scrollRef}>
+        <div className="space-y-3 pr-3">
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[85%] rounded-lg px-4 py-2.5 text-sm ${
+                  msg.role === 'user'
+                    ? 'bg-primary/20 text-foreground border border-primary/30'
+                    : 'bg-card/50 text-foreground border border-border/30'
+                }`}
+              >
+                {msg.content}
+              </div>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+
+      <div className="flex gap-2 pt-3 border-t border-border/30">
+        <Input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+          placeholder="Ask me anything..."
+          className="bg-background/50 border-border/50 text-sm h-10"
+        />
+        <Button
+          onClick={handleSend}
+          className="bg-primary hover:bg-primary/90 text-sm h-10 px-4"
+        >
+          <Send className="w-4 h-4" />
+        </Button>
+      </div>
+    </div>
   );
 };
 
