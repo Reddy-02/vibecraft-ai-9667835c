@@ -8,57 +8,58 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 263 70% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 20%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 263 70% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 95%;
+    --accent-foreground: 0 0% 10%;
 
-    --destructive: 0 63% 55%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 0% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 263 70% 60%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 90%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Premium Colors */
-    --neon-purple: 263 70% 60%;
-    --neon-pink: 330 80% 65%;
-    --neon-cyan: 180 90% 55%;
-    --premium-gold: 45 100% 70%;
+    /* Premium Monochrome */
+    --premium-white: 0 0% 100%;
+    --premium-light: 0 0% 90%;
+    --premium-mid: 0 0% 50%;
+    --premium-dark: 0 0% 10%;
+    --premium-black: 0 0% 0%;
     
-    /* Mood Colors */
-    --mood-happy: 45 95% 65%;
-    --mood-sad: 210 70% 60%;
-    --mood-angry: 0 75% 60%;
-    --mood-surprised: 280 90% 65%;
+    /* Mood Colors - Grayscale */
+    --mood-happy: 0 0% 85%;
+    --mood-sad: 0 0% 35%;
+    --mood-angry: 0 0% 25%;
+    --mood-surprised: 0 0% 75%;
     --mood-neutral: 0 0% 50%;
 
     /* Premium Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(263 70% 60%), hsl(330 80% 65%));
-    --gradient-glass: linear-gradient(135deg, hsl(0 0% 15% / 0.4), hsl(0 0% 10% / 0.2));
-    --gradient-premium: linear-gradient(135deg, hsl(263 70% 60% / 0.1), hsl(330 80% 65% / 0.1));
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 20%), hsl(0 0% 5%));
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 15% / 0.5), hsl(0 0% 8% / 0.3));
+    --gradient-premium: linear-gradient(135deg, hsl(0 0% 100% / 0.05), hsl(0 0% 100% / 0.02));
     
     /* Premium Effects */
-    --glow-soft: 0 0 40px hsl(263 70% 60% / 0.2);
-    --glow-strong: 0 0 30px hsl(263 70% 60% / 0.4), 0 0 60px hsl(263 70% 60% / 0.2);
+    --glow-soft: 0 0 40px hsl(0 0% 100% / 0.1);
+    --glow-strong: 0 0 30px hsl(0 0% 100% / 0.2), 0 0 60px hsl(0 0% 100% / 0.1);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }

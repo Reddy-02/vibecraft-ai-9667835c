@@ -16,32 +16,39 @@ const MoodAnalytics = () => {
   const [moodData, setMoodData] = useState<MoodData[]>([]);
 
   useEffect(() => {
-    // Load from localStorage
-    const stored = localStorage.getItem('moodHistory');
-    if (stored) {
-      setMoodData(JSON.parse(stored));
-    } else {
-      // Generate sample data for demo
-      const sampleData: MoodData[] = [];
-      const today = new Date();
-      
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
+    const loadData = () => {
+      const stored = localStorage.getItem('moodHistory');
+      if (stored) {
+        setMoodData(JSON.parse(stored));
+      } else {
+        // Initialize with empty data for the last 7 days
+        const sampleData: MoodData[] = [];
+        const today = new Date();
         
-        sampleData.push({
-          date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          happy: Math.floor(Math.random() * 30) + 20,
-          sad: Math.floor(Math.random() * 20) + 5,
-          angry: Math.floor(Math.random() * 15) + 5,
-          surprised: Math.floor(Math.random() * 25) + 10,
-          neutral: Math.floor(Math.random() * 30) + 15,
-        });
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(today);
+          date.setDate(date.getDate() - i);
+          
+          sampleData.push({
+            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            happy: 0,
+            sad: 0,
+            angry: 0,
+            surprised: 0,
+            neutral: 0,
+          });
+        }
+        
+        setMoodData(sampleData);
+        localStorage.setItem('moodHistory', JSON.stringify(sampleData));
       }
-      
-      setMoodData(sampleData);
-      localStorage.setItem('moodHistory', JSON.stringify(sampleData));
-    }
+    };
+    
+    loadData();
+    
+    // Refresh data every 5 seconds to show updates
+    const interval = setInterval(loadData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -73,30 +80,30 @@ const MoodAnalytics = () => {
             <Line 
               type="monotone" 
               dataKey="happy" 
-              stroke="hsl(45 95% 65%)" 
+              stroke="hsl(0 0% 85%)" 
               strokeWidth={2}
-              dot={{ fill: 'hsl(45 95% 65%)', r: 3 }}
+              dot={{ fill: 'hsl(0 0% 85%)', r: 3 }}
             />
             <Line 
               type="monotone" 
               dataKey="sad" 
-              stroke="hsl(210 70% 60%)" 
+              stroke="hsl(0 0% 35%)" 
               strokeWidth={2}
-              dot={{ fill: 'hsl(210 70% 60%)', r: 3 }}
+              dot={{ fill: 'hsl(0 0% 35%)', r: 3 }}
             />
             <Line 
               type="monotone" 
               dataKey="angry" 
-              stroke="hsl(0 75% 60%)" 
+              stroke="hsl(0 0% 25%)" 
               strokeWidth={2}
-              dot={{ fill: 'hsl(0 75% 60%)', r: 3 }}
+              dot={{ fill: 'hsl(0 0% 25%)', r: 3 }}
             />
             <Line 
               type="monotone" 
               dataKey="surprised" 
-              stroke="hsl(280 90% 65%)" 
+              stroke="hsl(0 0% 75%)" 
               strokeWidth={2}
-              dot={{ fill: 'hsl(280 90% 65%)', r: 3 }}
+              dot={{ fill: 'hsl(0 0% 75%)', r: 3 }}
             />
             <Line 
               type="monotone" 
