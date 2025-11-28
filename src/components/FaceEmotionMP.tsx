@@ -1,12 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
-
-declare global {
-  interface Window {
-    FaceLandmarker: any;
-    FilesetResolver: any;
-  }
-}
+import { FilesetResolver, FaceLandmarker } from '@mediapipe/tasks-vision';
 
 type Emotion = 'happy' | 'sad' | 'surprised' | 'neutral' | 'angry';
 
@@ -60,32 +54,9 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
 
   useEffect(() => {
     if (scriptLoadedRef.current) return;
+    scriptLoadedRef.current = true;
     
-    const existingScript = document.querySelector('script[src*="mediapipe"]');
-    if (existingScript) {
-      existingScript.remove();
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/vision_bundle.js';
-    script.async = true;
-    script.crossOrigin = 'anonymous';
-    
-    script.onload = () => {
-      console.log('MediaPipe script loaded successfully');
-      scriptLoadedRef.current = true;
-      setTimeout(() => {
-        initializeFaceLandmarker();
-      }, 100);
-    };
-
-    script.onerror = (e) => {
-      console.error('Failed to load MediaPipe script:', e);
-      setError('Failed to load face detection library. Please refresh the page.');
-      setIsLoading(false);
-    };
-
-    document.body.appendChild(script);
+    initializeFaceLandmarker();
 
     return () => {
       if (faceLandmarkerRef.current) {
@@ -95,26 +66,18 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
           console.error('Error closing face landmarker:', e);
         }
       }
-      const scriptToRemove = document.querySelector('script[src*="mediapipe"]');
-      if (scriptToRemove) {
-        document.body.removeChild(scriptToRemove);
-      }
     };
   }, []);
 
   const initializeFaceLandmarker = async () => {
     try {
-      if (!window.FilesetResolver || !window.FaceLandmarker) {
-        throw new Error('MediaPipe libraries not available');
-      }
-
       console.log('Initializing FilesetResolver...');
-      const vision = await window.FilesetResolver.forVisionTasks(
-        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm'
+      const vision = await FilesetResolver.forVisionTasks(
+        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm'
       );
 
       console.log('Creating FaceLandmarker...');
-      faceLandmarkerRef.current = await window.FaceLandmarker.createFromOptions(vision, {
+      faceLandmarkerRef.current = await FaceLandmarker.createFromOptions(vision, {
         baseOptions: {
           modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
           delegate: 'GPU',
