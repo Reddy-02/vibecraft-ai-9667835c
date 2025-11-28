@@ -20,17 +20,21 @@ const MoodAnalytics = () => {
     const loadData = () => {
       const stored = localStorage.getItem('moodHistory');
       if (stored) {
-        const data = JSON.parse(stored);
-        setMoodData(data);
+        const allData = JSON.parse(stored);
+        setMoodData(allData);
         
-        // Calculate max value across all moods
-        const max = data.reduce((acc: number, day: MoodData) => {
-          const dayMax = Math.max(day.happy, day.sad, day.angry, day.surprised, day.neutral);
-          return Math.max(acc, dayMax);
-        }, 0);
-        
-        // Set max with a small buffer, minimum of 5
-        setMaxValue(Math.max(Math.ceil(max * 1.2), 5));
+        if (allData.length > 0) {
+          // Calculate max value across all moods
+          const max = allData.reduce((acc: number, day: MoodData) => {
+            const dayMax = Math.max(day.happy, day.sad, day.angry, day.surprised, day.neutral);
+            return Math.max(acc, dayMax);
+          }, 0);
+          
+          // Set max with a small buffer, minimum of 5
+          setMaxValue(Math.max(Math.ceil(max * 1.2), 5));
+        } else {
+          setMaxValue(5);
+        }
       } else {
         setMoodData([]);
         setMaxValue(5);
