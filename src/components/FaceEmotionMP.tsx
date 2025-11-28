@@ -29,6 +29,14 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
     const stored = localStorage.getItem('moodHistory');
     let history = stored ? JSON.parse(stored) : [];
     
+    // Only keep today's data and future data
+    history = history.filter((h: any) => {
+      const entryDate = new Date(h.date + ' ' + new Date().getFullYear());
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+      return entryDate >= currentDate;
+    });
+    
     const todayEntry = history.find((h: any) => h.date === today);
     if (todayEntry) {
       todayEntry[emotion] = (todayEntry[emotion] || 0) + 1;
@@ -43,10 +51,6 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
       };
       newEntry[emotion] = 1;
       history.push(newEntry);
-      
-      if (history.length > 7) {
-        history = history.slice(-7);
-      }
     }
     
     localStorage.setItem('moodHistory', JSON.stringify(history));
