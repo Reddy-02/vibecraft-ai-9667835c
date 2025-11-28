@@ -14,12 +14,23 @@ interface MoodData {
 
 const MoodAnalytics = () => {
   const [moodData, setMoodData] = useState<MoodData[]>([]);
+  const [maxValue, setMaxValue] = useState<number>(10);
 
   useEffect(() => {
     const loadData = () => {
       const stored = localStorage.getItem('moodHistory');
       if (stored) {
-        setMoodData(JSON.parse(stored));
+        const data = JSON.parse(stored);
+        setMoodData(data);
+        
+        // Calculate max value across all moods
+        const max = data.reduce((acc: number, day: MoodData) => {
+          const dayMax = Math.max(day.happy, day.sad, day.angry, day.surprised, day.neutral);
+          return Math.max(acc, dayMax);
+        }, 0);
+        
+        // Set max with a small buffer, minimum of 5
+        setMaxValue(Math.max(Math.ceil(max * 1.2), 5));
       } else {
         // Initialize with empty data for the last 7 days
         const sampleData: MoodData[] = [];
@@ -67,6 +78,8 @@ const MoodAnalytics = () => {
             <YAxis 
               stroke="hsl(0 0% 60%)"
               style={{ fontSize: '11px', fontWeight: '300' }}
+              domain={[0, maxValue]}
+              allowDataOverflow={false}
             />
             <Tooltip 
               contentStyle={{ 
