@@ -32,26 +32,8 @@ const MoodAnalytics = () => {
         // Set max with a small buffer, minimum of 5
         setMaxValue(Math.max(Math.ceil(max * 1.2), 5));
       } else {
-        // Initialize with empty data for the last 7 days
-        const sampleData: MoodData[] = [];
-        const today = new Date();
-        
-        for (let i = 6; i >= 0; i--) {
-          const date = new Date(today);
-          date.setDate(date.getDate() - i);
-          
-          sampleData.push({
-            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            happy: 0,
-            sad: 0,
-            angry: 0,
-            surprised: 0,
-            neutral: 0,
-          });
-        }
-        
-        setMoodData(sampleData);
-        localStorage.setItem('moodHistory', JSON.stringify(sampleData));
+        setMoodData([]);
+        setMaxValue(5);
       }
     };
     
