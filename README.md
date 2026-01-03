@@ -1,73 +1,58 @@
-# Welcome to your Lovable project
+# VibeCraft
 
-## Project info
+A premium mood detection and analytics application built with React, featuring real-time facial emotion recognition powered by MediaPipe.
 
-**URL**: https://lovable.dev/projects/134efc21-d1d6-4883-8410-1f359340ab1c
+## Features
 
-## How can I edit this code?
+- **Real-time Emotion Detection** - Uses MediaPipe's face landmark detection to analyze facial expressions
+- **Mood Analytics** - Dynamic weekly chart tracking your emotional patterns
+- **AI Assistant (Bujji)** - Interactive orb companion with mood-aware responses
+- **Motivational Quotes** - Curated quotes based on your current mood
+- **Premium Design** - Minimal black and white aesthetic
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Emotion Detection**: MediaPipe Tasks Vision
+- **Charts**: Recharts
+- **Routing**: React Router DOM
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/134efc21-d1d6-4883-8410-1f359340ab1c) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+```bash
+# Install dependencies
+npm install
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+src/
+├── components/
+│   ├── AssistantPanel.tsx    # Bujji AI assistant panel
+│   ├── BujjiOrb.tsx          # Animated orb companion
+│   ├── FaceEmotionMP.tsx     # MediaPipe emotion detection
+│   ├── GenerationPanel.tsx   # Content generation panel
+│   ├── MoodAnalytics.tsx     # Weekly mood chart
+│   ├── MoodQuotes.tsx        # Mood-based quotes
+│   └── ui/                   # shadcn/ui components
+├── pages/
+│   └── Index.tsx             # Main application page
+└── index.css                 # Global styles & design tokens
+```
 
-**Use GitHub Codespaces**
+## How It Works
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Grant camera access when prompted
+2. The app analyzes your facial expressions in real-time
+3. Detected moods are tracked and displayed in the analytics chart
+4. Bujji responds to your emotional state with appropriate messages
+5. Quotes update based on your current mood
 
-## What technologies are used for this project?
+## License
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/134efc21-d1d6-4883-8410-1f359340ab1c) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT
