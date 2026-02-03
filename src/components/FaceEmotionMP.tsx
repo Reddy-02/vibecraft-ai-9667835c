@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FilesetResolver, FaceLandmarker } from '@mediapipe/tasks-vision';
+import { Camera, AlertCircle } from 'lucide-react';
 
 type Emotion = 'happy' | 'sad' | 'surprised' | 'neutral' | 'angry';
 
@@ -19,6 +20,14 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
   const lastSaveTimeRef = useRef<number>(Date.now());
   const scriptLoadedRef = useRef(false);
 
+  const emotionConfig: Record<Emotion, { label: string; emoji: string; color: string; bgColor: string }> = {
+    happy: { label: 'Happy', emoji: '😊', color: 'hsl(48 100% 67%)', bgColor: 'hsl(48 100% 67% / 0.15)' },
+    sad: { label: 'Sad', emoji: '😢', color: 'hsl(210 70% 55%)', bgColor: 'hsl(210 70% 55% / 0.15)' },
+    surprised: { label: 'Surprised', emoji: '😮', color: 'hsl(280 80% 68%)', bgColor: 'hsl(280 80% 68% / 0.15)' },
+    neutral: { label: 'Neutral', emoji: '😐', color: 'hsl(220 10% 60%)', bgColor: 'hsl(220 10% 60% / 0.15)' },
+    angry: { label: 'Angry', emoji: '😠', color: 'hsl(0 65% 55%)', bgColor: 'hsl(0 65% 55% / 0.15)' },
+  };
+
   const saveMoodToHistory = (emotion: Emotion) => {
     const now = Date.now();
     if (now - lastSaveTimeRef.current < 5000) return;
@@ -29,7 +38,6 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
     const stored = localStorage.getItem('moodHistory');
     let history = stored ? JSON.parse(stored) : [];
     
-    // Only keep today's data and future data
     history = history.filter((h: any) => {
       const entryDate = new Date(h.date + ' ' + new Date().getFullYear());
       const currentDate = new Date();
@@ -75,12 +83,10 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
 
   const initializeFaceLandmarker = async () => {
     try {
-      console.log('Initializing FilesetResolver...');
       const vision = await FilesetResolver.forVisionTasks(
         'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm'
       );
 
-      console.log('Creating FaceLandmarker...');
       faceLandmarkerRef.current = await FaceLandmarker.createFromOptions(vision, {
         baseOptions: {
           modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
@@ -90,11 +96,9 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
         numFaces: 1,
       });
 
-      console.log('FaceLandmarker initialized successfully');
       startWebcam();
     } catch (err) {
-      console.error('Initialization error:', err);
-      setError(`Failed to initialize face detection: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      setError(`Failed to initialize: ${err instanceof Error ? err.message : 'Unknown error'}`);
       setIsLoading(false);
     }
   };
@@ -121,23 +125,19 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
 
     const face = landmarks[0];
     
-    // Mouth corners
     const leftMouth = face[61];
     const rightMouth = face[291];
     const topLip = face[13];
     const bottomLip = face[14];
     
-    // Eyes
     const leftEyeTop = face[159];
     const leftEyeBottom = face[145];
     const rightEyeTop = face[386];
     const rightEyeBottom = face[374];
     
-    // Eyebrows
     const leftBrow = face[70];
     const rightBrow = face[300];
     
-    // Calculate metrics
     const mouthWidth = Math.abs(rightMouth.x - leftMouth.x);
     const mouthHeight = Math.abs(bottomLip.y - topLip.y);
     const mouthRatio = mouthHeight / mouthWidth;
@@ -153,7 +153,6 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
     const eyeHeight = (leftEyeTop.y + rightEyeTop.y) / 2;
     const browRaised = eyeHeight - browHeight > 0.03;
 
-    // Emotion detection logic
     if (isSmiling && mouthRatio > 0.15) return 'happy';
     if (browRaised && eyeOpenness > 0.02) return 'surprised';
     if (mouthRatio < 0.08 && !isSmiling) return 'sad';
@@ -200,46 +199,43 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
           setEmotion(smoothedEmotion);
           onEmotionDetected?.(smoothedEmotion);
           
-          // Save to mood history
           saveMoodToHistory(smoothedEmotion);
           
-          // Draw HUD circle around face
           const landmarks = result.faceLandmarks[0];
           const centerX = landmarks.reduce((sum: number, p: any) => sum + p.x, 0) / landmarks.length;
           const centerY = landmarks.reduce((sum: number, p: any) => sum + p.y, 0) / landmarks.length;
           
           const radius = 150;
+          const color = emotionConfig[smoothedEmotion].color;
           
-          const emotionColors: Record<Emotion, string> = {
-            happy: '#d9d9d9',
-            sad: '#595959',
-            angry: '#404040',
-            surprised: '#bfbfbf',
-            neutral: '#808080',
-          };
+          // Outer glow ring
+          ctx.beginPath();
+          ctx.arc(centerX * canvas.width, centerY * canvas.height, radius + 20, 0, Math.PI * 2);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 0.2;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
           
-          // Glow circle
+          // Main ring
           ctx.beginPath();
           ctx.arc(centerX * canvas.width, centerY * canvas.height, radius, 0, Math.PI * 2);
-          ctx.strokeStyle = emotionColors[smoothedEmotion];
-          ctx.lineWidth = 4;
-          ctx.shadowBlur = 30;
-          ctx.shadowColor = emotionColors[smoothedEmotion];
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2;
+          ctx.shadowBlur = 40;
+          ctx.shadowColor = color;
           ctx.stroke();
           ctx.shadowBlur = 0;
           
-          // Draw face mesh dots
-          landmarks.forEach((landmark: any) => {
-            ctx.beginPath();
-            ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 1, 0, Math.PI * 2);
-            ctx.fillStyle = `${emotionColors[smoothedEmotion]}80`;
-            ctx.fill();
+          // Face mesh dots - minimal
+          landmarks.forEach((landmark: any, i: number) => {
+            if (i % 3 === 0) { // Draw every 3rd point for cleaner look
+              ctx.beginPath();
+              ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 1, 0, Math.PI * 2);
+              ctx.fillStyle = `${color}40`;
+              ctx.fill();
+            }
           });
-          
-          // Neon border
-          ctx.strokeStyle = emotionColors[smoothedEmotion];
-          ctx.lineWidth = 3;
-          ctx.strokeRect(0, 0, canvas.width, canvas.height);
         }
       }
       
@@ -249,53 +245,94 @@ const FaceEmotionMP = ({ onEmotionDetected }: FaceEmotionMPProps) => {
     detect();
   };
 
-  const emotionEmojis: Record<Emotion, string> = {
-    happy: '😊',
-    sad: '😢',
-    surprised: '😮',
-    neutral: '😐',
-    angry: '😠',
-  };
-
   return (
-    <Card className="glass-panel p-6 premium-glow h-full">
-      <h2 className="text-xl font-light mb-6 text-foreground">Emotion Detection</h2>
-      
-      {error && (
-        <div className="bg-destructive/10 border border-destructive/50 text-destructive-foreground p-3 rounded-lg mb-4 text-sm">
-          {error}
+    <motion.div 
+      className="glass-panel p-6 lg:p-8 h-full card-hover"
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-medium text-foreground mb-1">Emotion Detection</h2>
+          <p className="text-sm text-muted-foreground">Real-time facial analysis</p>
         </div>
-      )}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 border border-border/30">
+          <Camera className="w-3.5 h-3.5 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Live</span>
+        </div>
+      </div>
+      
+      <AnimatePresence mode="wait">
+        {error && (
+          <motion.div 
+            className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/20 mb-4"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+          >
+            <AlertCircle className="w-5 h-5 text-destructive" />
+            <p className="text-sm text-destructive">{error}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {isLoading && (
-        <div className="flex items-center justify-center h-64">
-          <div className="text-muted-foreground text-sm">Initializing...</div>
+        <div className="flex flex-col items-center justify-center h-64 gap-4">
+          <div className="w-12 h-12 rounded-full border-2 border-muted border-t-foreground animate-spin" />
+          <p className="text-sm text-muted-foreground font-light">Initializing camera...</p>
         </div>
       )}
 
-      <div className="relative" style={{ display: isLoading ? 'none' : 'block' }}>
+      <div className="relative rounded-2xl overflow-hidden" style={{ display: isLoading ? 'none' : 'block' }}>
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
-          className="w-full rounded-lg border border-border/50"
+          className="w-full rounded-2xl"
         />
         <canvas
           ref={canvasRef}
           className="absolute top-0 left-0 w-full h-full pointer-events-none"
         />
+        
+        {/* Corner accents */}
+        <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-foreground/20 rounded-tl-lg" />
+        <div className="absolute top-3 right-3 w-8 h-8 border-r-2 border-t-2 border-foreground/20 rounded-tr-lg" />
+        <div className="absolute bottom-3 left-3 w-8 h-8 border-l-2 border-b-2 border-foreground/20 rounded-bl-lg" />
+        <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-foreground/20 rounded-br-lg" />
       </div>
 
-      {emotion && (
-        <div className="mt-6 p-4 bg-card/50 backdrop-blur-sm rounded-lg text-center border border-border/30">
-          <div className="text-4xl mb-2">{emotionEmojis[emotion]}</div>
-          <div className="text-lg font-light capitalize text-foreground">
-            {emotion}
-          </div>
-        </div>
-      )}
-    </Card>
+      <AnimatePresence mode="wait">
+        {emotion && !isLoading && (
+          <motion.div 
+            key={emotion}
+            className="mt-6 p-5 rounded-2xl flex items-center gap-4"
+            style={{ backgroundColor: emotionConfig[emotion].bgColor }}
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.span 
+              className="text-5xl"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+            >
+              {emotionConfig[emotion].emoji}
+            </motion.span>
+            <div>
+              <p className="text-lg font-medium text-foreground">
+                {emotionConfig[emotion].label}
+              </p>
+              <p className="text-sm text-muted-foreground">Detected mood</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
