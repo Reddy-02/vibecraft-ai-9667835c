@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Image as ImageIcon, MessageSquare, Volume2 } from 'lucide-react';
+import { Sparkles, Volume2, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface GenerationPanelProps {
@@ -17,7 +17,6 @@ const GenerationPanel = ({ currentMood }: GenerationPanelProps) => {
     setIsGenerating(true);
     toast.info('Generating mood-based content...');
 
-    // Simulate generation
     setTimeout(() => {
       const moodAffirmations: Record<string, string[]> = {
         happy: [
@@ -28,7 +27,7 @@ const GenerationPanel = ({ currentMood }: GenerationPanelProps) => {
         sad: [
           'This feeling is temporary, brighter days are ahead.',
           'You are stronger than you know.',
-          'It\'s okay to feel this way. You\'re not alone.',
+          "It's okay to feel this way. You're not alone.",
         ],
         angry: [
           'Your feelings are valid. Take a deep breath.',
@@ -51,7 +50,6 @@ const GenerationPanel = ({ currentMood }: GenerationPanelProps) => {
       setAffirmations(selectedAffirmations);
       setWallpaperUrl(`https://picsum.photos/800/600?random=${Date.now()}`);
       
-      // Auto-play first affirmation
       if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(selectedAffirmations[0]);
         utterance.rate = 0.9;
@@ -73,58 +71,122 @@ const GenerationPanel = ({ currentMood }: GenerationPanelProps) => {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <Card className="glass-panel p-6 relative overflow-hidden premium-glow h-full">
+    <motion.div 
+      className="glass-panel p-6 lg:p-8 relative overflow-hidden h-full card-hover"
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.1 }}
+    >
       <div className="relative z-10">
-        <h2 className="text-xl font-light mb-6 text-foreground">Enhancement</h2>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-medium text-foreground mb-1">Enhancement</h2>
+            <p className="text-sm text-muted-foreground">AI-powered mood content</p>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 border border-border/30">
+            <Sparkles className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground font-medium capitalize">{currentMood}</span>
+          </div>
+        </div>
 
         <Button
           onClick={generateContent}
           disabled={isGenerating}
-          className="w-full mb-6 bg-primary hover:bg-primary/90 text-primary-foreground font-light py-6 text-base premium-glow-strong transition-all"
+          className="w-full mb-6 btn-premium text-primary-foreground font-medium py-6 text-sm tracking-wide rounded-xl"
         >
-          {isGenerating ? 'Generating...' : 'Generate Content'}
+          {isGenerating ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4 mr-2" />
+              Generate Content
+            </>
+          )}
         </Button>
 
-        {wallpaperUrl && (
-          <div className="mb-6">
-            <h3 className="text-sm font-light mb-3 text-muted-foreground uppercase tracking-wider">Mood Wallpaper</h3>
-            <img
-              src={wallpaperUrl}
-              alt="Generated mood wallpaper"
-              className="w-full rounded-lg border border-border/50"
-            />
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {wallpaperUrl && (
+            <motion.div 
+              className="mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Mood Wallpaper
+                </h3>
+              </div>
+              <div className="relative rounded-2xl overflow-hidden group">
+                <img
+                  src={wallpaperUrl}
+                  alt="Generated mood wallpaper"
+                  className="w-full rounded-2xl transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {affirmations.length > 0 && (
-          <div>
-            <h3 className="text-sm font-light mb-3 text-muted-foreground uppercase tracking-wider">Affirmations</h3>
-            <div className="space-y-3">
-              {affirmations.map((affirmation, index) => (
-                <div
-                  key={index}
-                  className="p-4 bg-card/50 backdrop-blur-sm rounded-lg flex items-start gap-3 border border-border/30"
-                >
-                  <span className="text-xl opacity-60">{index === 0 ? '🌟' : index === 1 ? '💫' : '✨'}</span>
-                  <div className="flex-1">
-                    <p className="text-foreground text-sm">{affirmation}</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => speakAffirmation(affirmation)}
-                    className="shrink-0 hover:bg-primary/10"
+        <AnimatePresence mode="wait">
+          {affirmations.length > 0 && (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+            >
+              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                Affirmations
+              </h3>
+              <div className="space-y-3">
+                {affirmations.map((affirmation, index) => (
+                  <motion.div
+                    key={index}
+                    variants={itemVariants}
+                    className="group p-4 bg-card/40 backdrop-blur-sm rounded-xl flex items-start gap-4 border border-border/20 hover:border-border/40 transition-colors"
                   >
-                    🔊
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+                    <span className="text-xl opacity-70 group-hover:opacity-100 transition-opacity">
+                      {index === 0 ? '✦' : index === 1 ? '◆' : '●'}
+                    </span>
+                    <p className="flex-1 text-sm text-foreground/90 leading-relaxed">
+                      {affirmation}
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => speakAffirmation(affirmation)}
+                      className="shrink-0 h-8 w-8 p-0 opacity-50 hover:opacity-100 transition-opacity"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                    </Button>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </Card>
+    </motion.div>
   );
 };
 
