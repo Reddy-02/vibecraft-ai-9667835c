@@ -11,11 +11,11 @@ interface MoodDashboardProps {
 }
 
 const moodColors: Record<Emotion, { primary: string; gradient: string }> = {
-  happy: { primary: '#FFD700', gradient: 'url(#gradient-happy)' },
-  sad: { primary: '#4A90D9', gradient: 'url(#gradient-sad)' },
-  angry: { primary: '#E85454', gradient: 'url(#gradient-angry)' },
-  surprised: { primary: '#C471ED', gradient: 'url(#gradient-surprised)' },
-  neutral: { primary: '#8B9DC3', gradient: 'url(#gradient-neutral)' },
+  happy: { primary: 'hsl(48, 100%, 55%)', gradient: 'url(#gradient-happy)' },
+  sad: { primary: 'hsl(210, 80%, 55%)', gradient: 'url(#gradient-sad)' },
+  angry: { primary: 'hsl(0, 75%, 55%)', gradient: 'url(#gradient-angry)' },
+  surprised: { primary: 'hsl(280, 85%, 65%)', gradient: 'url(#gradient-surprised)' },
+  neutral: { primary: 'hsl(0, 0%, 55%)', gradient: 'url(#gradient-neutral)' },
 };
 
 const moodQuotes: Record<Emotion, string[]> = {
@@ -105,28 +105,27 @@ const MoodDashboard = ({ currentMood }: MoodDashboardProps) => {
       className="fixed bottom-0 left-0 right-0 z-30"
       initial={{ y: 100 }}
       animate={{ y: 0 }}
-      transition={{ delay: 0.8, duration: 0.6 }}
+      transition={{ delay: 0.6, duration: 0.5 }}
     >
-      <div className="glass-panel-elevated border-t border-border/50 mx-4 mb-4 rounded-2xl overflow-hidden">
+      <div className="glass-panel-elevated border-t border-border/40 mx-4 mb-4 rounded-2xl overflow-hidden">
         {/* Toggle Header */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-muted/20 transition-colors"
+          className="w-full px-5 py-3.5 flex items-center justify-between hover:bg-accent/30 transition-colors"
         >
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                 style={{ backgroundColor: `${moodColors[currentMood].primary}20` }}>
-              <Sparkles className="w-5 h-5" style={{ color: moodColors[currentMood].primary }} />
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center border border-border/40">
+              <Sparkles className="w-4 h-4 text-foreground/60" />
             </div>
             <div className="text-left">
-              <h3 className="text-base font-semibold text-foreground">Mood Insights</h3>
-              <p className="text-xs text-muted-foreground">Analytics & Affirmations</p>
+              <h3 className="text-sm font-semibold text-foreground">Mood Insights</h3>
+              <p className="text-[11px] text-muted-foreground">Analytics & Affirmations</p>
             </div>
           </div>
           {expanded ? (
-            <ChevronDown className="w-5 h-5 text-muted-foreground" />
+            <ChevronDown className="w-4 h-4 text-muted-foreground" />
           ) : (
-            <ChevronUp className="w-5 h-5 text-muted-foreground" />
+            <ChevronUp className="w-4 h-4 text-muted-foreground" />
           )}
         </button>
 
@@ -139,12 +138,12 @@ const MoodDashboard = ({ currentMood }: MoodDashboardProps) => {
               transition={{ duration: 0.3 }}
               className="overflow-hidden"
             >
-              <div className="px-6 pb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="px-5 pb-5 grid grid-cols-1 lg:grid-cols-2 gap-5">
                 {/* Quote Section */}
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Quote className="w-4 h-4 text-muted-foreground" />
-                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                    <Quote className="w-3.5 h-3.5 text-muted-foreground" />
+                    <h4 className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest">
                       Affirmation
                     </h4>
                   </div>
@@ -152,10 +151,10 @@ const MoodDashboard = ({ currentMood }: MoodDashboardProps) => {
                   <AnimatePresence mode="wait">
                     <motion.blockquote
                       key={quote}
-                      className="text-lg font-light text-foreground leading-relaxed"
-                      initial={{ opacity: 0, x: -20 }}
+                      className="text-base font-light text-foreground/90 leading-relaxed"
+                      initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
+                      exit={{ opacity: 0, x: 10 }}
                     >
                       "{quote}"
                     </motion.blockquote>
@@ -165,45 +164,45 @@ const MoodDashboard = ({ currentMood }: MoodDashboardProps) => {
                     variant="ghost"
                     size="sm"
                     onClick={speakQuote}
-                    className="h-9 px-4 rounded-full bg-muted/30 hover:bg-muted/50"
+                    className="h-8 px-3 rounded-lg bg-secondary/50 hover:bg-accent/50 text-xs"
                   >
                     {isSpeaking ? (
-                      <><Volume2 className="w-4 h-4 mr-2" /> Speaking...</>
+                      <><Volume2 className="w-3.5 h-3.5 mr-1.5" /> Speaking…</>
                     ) : (
-                      <><VolumeX className="w-4 h-4 mr-2" /> Listen</>
+                      <><VolumeX className="w-3.5 h-3.5 mr-1.5" /> Listen</>
                     )}
                   </Button>
                 </div>
 
                 {/* Chart Section */}
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                    <TrendingUp className="w-3.5 h-3.5 text-muted-foreground" />
+                    <h4 className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest">
                       Today's Patterns
                     </h4>
                   </div>
 
                   {moodData.length === 0 ? (
-                    <div className="h-32 flex items-center justify-center text-sm text-muted-foreground">
+                    <div className="h-28 flex items-center justify-center text-xs text-muted-foreground">
                       No data yet. Scan your face to start tracking.
                     </div>
                   ) : (
-                    <div className="h-32">
+                    <div className="h-28">
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={moodData}>
                           <defs>
                             {Object.entries(moodColors).map(([key, value]) => (
                               <linearGradient key={key} id={`gradient-${key}`} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor={value.primary} stopOpacity={0.4} />
+                                <stop offset="0%" stopColor={value.primary} stopOpacity={0.3} />
                                 <stop offset="100%" stopColor={value.primary} stopOpacity={0} />
                               </linearGradient>
                             ))}
                           </defs>
-                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 20%)" opacity={0.3} vertical={false} />
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 18%)" opacity={0.4} vertical={false} />
                           <XAxis 
                             dataKey="date" 
-                            stroke="hsl(0 0% 40%)" 
+                            stroke="hsl(0 0% 35%)" 
                             style={{ fontSize: '10px' }}
                             tickLine={false}
                           />
@@ -216,7 +215,7 @@ const MoodDashboard = ({ currentMood }: MoodDashboardProps) => {
                               dataKey={key}
                               stroke={value.primary}
                               fill={value.gradient}
-                              strokeWidth={2}
+                              strokeWidth={1.5}
                             />
                           ))}
                         </AreaChart>
